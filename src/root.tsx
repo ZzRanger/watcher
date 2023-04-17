@@ -13,8 +13,17 @@ import {
   Title,
 } from "solid-start";
 import "./root.css";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function Root() {
+  // Initialize Supbase here
+  // TODO: Find a better place to do this lol
+
   return (
     <Html lang="en">
       <Head>
