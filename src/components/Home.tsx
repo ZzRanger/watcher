@@ -1,20 +1,22 @@
 import { supabase } from "~/root";
 import styles from "./Home.module.css";
 import { createUniquSessionId } from "~/utils/utils";
-// import { useNavigate } from "solid-start";
+import { useNavigate } from "solid-start";
 
 export default function Home() {
   // Write some sort of code to create new session
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const createSession = async () => {
     const { data, error } = await supabase
       .from("session")
-      .insert({ id: createUniquSessionId() });
-    // if (data) {
-    //   navigate("/session/admin");
-    // }
+      .insert({ id: createUniquSessionId() })
+      .select();
+
+    if (data) {
+      navigate(`/session/${data[0].id}`);
+    }
   };
 
   return (
