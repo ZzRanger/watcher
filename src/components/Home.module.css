@@ -1,0 +1,25 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 20px;
+    height: 100vh;
+    overflow: hidden;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input {
+    width: 200px;
+}
+
+.button {
+    width: 200px;
+}
+
+.article {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 40px;
+}
