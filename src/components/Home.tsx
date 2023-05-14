@@ -2,11 +2,11 @@ import { supabase } from "~/root";
 import styles from "./Home.module.css";
 import { createUniquSessionId } from "~/utils/utils";
 import { A, useNavigate } from "solid-start";
+import { createSignal } from "solid-js";
 
 export default function Home() {
-  // Write some sort of code to create new session
-
   const navigate = useNavigate();
+  const [code, setCode] = createSignal("");
 
   const createSession = async () => {
     const { data, error } = await supabase
@@ -19,19 +19,69 @@ export default function Home() {
     }
   };
 
+  const handleJoinRoom = async () => {
+    // Check if the room exists first xD
+    const { data, error } = await supabase
+      .from("session")
+      .select()
+      .eq("id", code())
+      .single();
+
+    if (data) {
+      console.log(data);
+      navigate(`/session/${code()}`);
+    } else {
+      alert("Session code not found. Please try again");
+    }
+  };
+
   return (
     <div>
       <main class={styles.main}>
-        <h1>Watcher</h1>
-        <article class={styles.article}>
-          <h1>Enter Code</h1>
-          <input placeholder="Code" class={styles.input} />
-          <button>Join Room</button>
-          <h1>Or</h1>
-          <button onClick={createSession} class={styles.button}>
+        <article>
+          <img src="owl_two.png" width="100px" height="75px" alt="Solid logo" />
+          <h1>Watcher</h1>
+          <p>We watch so you don't have to</p>
+        </article>
+        <article style={{ gap: "10px" }}>
+          <input
+            value={code()}
+            onInput={(e) => setCode(e.target.value)}
+            placeholder="Session code"
+            class={styles.input}
+          />
+          <button
+            style={{ background: "black", color: "white" }}
+            class={styles.button}
+            onClick={handleJoinRoom}
+          >
+            Join Room
+          </button>
+        </article>
+
+        <article class={styles.article} style={{ gap: "10px" }}>
+          <button
+            style={{ background: "black", color: "white" }}
+            onClick={createSession}
+            class={styles.button}
+          >
             Create Session
           </button>
-          <A href="/session/admin">Admin</A>
+
+          <A
+            class={styles.button}
+            style={{
+              "text-decoration": "none",
+              display: "flex",
+              "flex-direction": "column",
+              "justify-content": "center",
+              background: "black",
+              color: "white",
+            }}
+            href="/session/admin"
+          >
+            Admin Panel
+          </A>
         </article>
       </main>
     </div>

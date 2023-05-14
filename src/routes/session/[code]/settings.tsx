@@ -48,16 +48,51 @@ export default function Settings() {
 
   return (
     <div>
-      <h1>Settings</h1>
-      <h3>Session Name</h3>
-      <input
-        value={!sessionData.loading ? sessionData()!.name : ""}
-        onChange={(e) =>
-          mutateSessionData({ ...sessionData(), name: e.target.value })
-        }
-        placeholder="Ex. Monday Morning"
-      />
-      <button onClick={handleSubmit}>Update Session</button>
+      <main
+        style={{
+          display: "flex",
+          "flex-direction": "column",
+          "align-items": "center",
+          "padding-top": "40px",
+          "padding-bottom": "40px",
+          height: "100vh",
+          "box-sizing": "border-box",
+        }}
+      >
+        <h1>Settings</h1>
+        <h3>Session Name</h3>
+        <input
+          style={{
+            width: "250px",
+            height: "36px",
+            "padding-left": "8px",
+            "box-sizing": "border-box",
+            "border-radius": "0.5rem",
+            border: "1px solid gray",
+            "font-size": "16px",
+          }}
+          value={!sessionData.loading ? sessionData()!.name : ""}
+          onChange={(e) =>
+            mutateSessionData({ ...sessionData(), name: e.target.value })
+          }
+          placeholder="Ex. Monday Morning"
+        />
+        <button
+          style={{
+            width: "250px",
+            height: "36px",
+            "text-align": "center",
+            background: "black",
+            color: "white",
+            "border-radius": "0.375rem",
+            "font-size": "16px",
+            cursor: "pointer",
+          }}
+          onClick={handleSubmit}
+        >
+          Update Session
+        </button>
+      </main>
     </div>
   );
 }

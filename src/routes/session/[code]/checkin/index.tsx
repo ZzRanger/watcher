@@ -67,19 +67,112 @@ export default function SessionPage() {
 
   return (
     <div>
-      <main>
+      <main
+        style={{
+          display: "flex",
+          "flex-direction": "column",
+          "align-items": "center",
+          "padding-top": "40px",
+          "padding-bottom": "40px",
+          height: "100vh",
+          "box-sizing": "border-box",
+        }}
+      >
         <h1>Check-in</h1>
-        <input placeholder="Search" />
-        <For each={peopleData() as any[] | null}>
-          {(personData) => (
-            <Person personData={personData} handleSelect={handleSelect} />
-          )}
-        </For>
-        <For each={selectedIds() as any[] | null}>
-          {(id) => <div>{id}</div>}
-        </For>
-        <A href={`/session/${params.code}/checkin/addChild`}>Add New Child</A>
-        <button onClick={handleSubmit}>Enter</button>
+        <div
+          style={{
+            display: "flex",
+            "flex-direction": "column",
+            "justify-content": "space-between",
+            height: "100%",
+          }}
+        >
+          <section
+            style={{
+              display: "flex",
+              "flex-direction": "column",
+              "align-items": "center",
+              "margin-top": "20px",
+              "margin-bottom": "20px",
+              border: "1px solid black",
+            }}
+          >
+            <input
+              placeholder="Search"
+              style={{
+                width: "250px",
+                height: "36px",
+                "padding-left": "8px",
+                "box-sizing": "border-box",
+                "border-radius": "0.5rem",
+                border: "1px solid gray",
+                "font-size": "16px",
+              }}
+            />
+            <article
+              style={{
+                width: "100%",
+                height: "50vh",
+                "overflow-y": "scroll",
+                "overflow-x": "hidden",
+              }}
+            >
+              <For each={peopleData() as any[] | null}>
+                {(personData) => (
+                  <Person
+                    personData={personData}
+                    checkinData={null}
+                    handleSelect={handleSelect}
+                  />
+                )}
+              </For>
+            </article>
+          </section>
+          <section
+            style={{
+              display: "flex",
+              "flex-direction": "column",
+              "align-items": "center",
+              height: "90px",
+              "justify-content": "space-between",
+            }}
+          >
+            <A
+              style={{
+                width: "250px",
+                height: "36px",
+                "text-align": "center",
+                "text-decoration": "none",
+                display: "flex",
+                "flex-direction": "column",
+                "justify-content": "center",
+                background: "black",
+                color: "white",
+                "border-radius": "0.375rem",
+                "font-size": "16px",
+                cursor: "pointer",
+              }}
+              href={`/session/${params.code}/checkin/addChild`}
+            >
+              Add New Child
+            </A>
+            <button
+              style={{
+                width: "250px",
+                height: "36px",
+                "text-align": "center",
+                background: "black",
+                color: "white",
+                "border-radius": "0.375rem",
+                "font-size": "16px",
+                cursor: "pointer",
+              }}
+              onClick={handleSubmit}
+            >
+              Enter
+            </button>
+          </section>
+        </div>
       </main>
     </div>
   );
