@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [
     solid({
-      extensions: [".mdx", ".md"],
+      ssr: false,
       adapter: vercel({ edge: true }),
     }),
   ],
