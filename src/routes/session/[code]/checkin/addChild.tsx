@@ -1,7 +1,6 @@
 import { createSignal } from "solid-js";
 import { useNavigate, useParams } from "solid-start";
 import { supabase } from "~/root";
-import { createUniquSessionId } from "~/utils/utils";
 
 export default function AddChild() {
   const [name, setName] = createSignal("");

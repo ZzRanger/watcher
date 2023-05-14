@@ -86,6 +86,7 @@ export default function SessionPage() {
         </For>
         <A href="checkin">Check-in</A>
         <button onClick={handleSubmit}>Check-out</button>
+        <A href="settings">Edit Session</A>
       </main>
     </div>
   );

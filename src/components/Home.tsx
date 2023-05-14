@@ -1,7 +1,7 @@
 import { supabase } from "~/root";
 import styles from "./Home.module.css";
 import { createUniquSessionId } from "~/utils/utils";
-import { useNavigate } from "solid-start";
+import { A, useNavigate } from "solid-start";
 
 export default function Home() {
   // Write some sort of code to create new session
@@ -31,6 +31,7 @@ export default function Home() {
           <button onClick={createSession} class={styles.button}>
             Create Session
           </button>
+          <A href="/session/admin">Admin</A>
         </article>
       </main>
     </div>
