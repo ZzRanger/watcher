@@ -62,8 +62,7 @@ export default function SessionPage() {
       const { data, error } = await supabase
         .from("check_in")
         .update({ check_out_time: currentTime })
-        .eq("person", 1);
-
+        .eq("person", id);
       if (error) {
         alert("ERROR");
       }
@@ -175,9 +174,7 @@ export default function SessionPage() {
               "margin-bottom": "12px",
             }}
           >
-            <div style={{ "align-self": "start", "font-size": "24px" }}>
-              Checked-in children
-            </div>
+            <div style={{ "font-size": "24px" }}>Checked-in children</div>
             {/* <input
               style={{
                 width: "250px",
@@ -197,18 +194,25 @@ export default function SessionPage() {
                 height: "45vh",
                 "overflow-y": "scroll",
                 "overflow-x": "hidden",
-
+                border: "1px solid gray",
+                "border-radius": "0.375rem",
                 margin: "2px",
               }}
             >
               <For each={peopleData() as any[] | null}>
-                {(personData) => {
+                {(personData, index) => {
                   return (
-                    <Person
-                      personData={personData.person}
-                      checkinData={personData.check_in_time}
-                      handleSelect={handleSelect}
-                    />
+                    <div
+                      style={{
+                        background: `${index() % 2 == 0 ? "lightgray" : ""}`,
+                      }}
+                    >
+                      <Person
+                        personData={personData.person}
+                        checkinData={personData.check_in_time}
+                        handleSelect={handleSelect}
+                      />
+                    </div>
                   );
                 }}
               </For>
