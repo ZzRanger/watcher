@@ -3,6 +3,7 @@ import styles from "./Home.module.css";
 import { createUniquSessionId } from "~/utils/utils";
 import { A, useNavigate } from "solid-start";
 import { createSignal } from "solid-js";
+import QRCodeSVG from "solid-qr-code";
 
 export default function Home() {
   const navigate = useNavigate();
