@@ -94,10 +94,9 @@ export default function SessionPage() {
               "align-items": "center",
               "margin-top": "20px",
               "margin-bottom": "20px",
-              border: "1px solid black",
             }}
           >
-            <input
+            {/* <input
               placeholder="Search"
               style={{
                 width: "250px",
@@ -108,13 +107,16 @@ export default function SessionPage() {
                 border: "1px solid gray",
                 "font-size": "16px",
               }}
-            />
+            /> */}
             <article
               style={{
                 width: "100%",
-                height: "50vh",
+                height: "45vh",
                 "overflow-y": "scroll",
                 "overflow-x": "hidden",
+                display: "flex",
+                "flex-direction": "column",
+                margin: "2px",
               }}
             >
               <For each={peopleData() as any[] | null}>
@@ -133,10 +135,40 @@ export default function SessionPage() {
               display: "flex",
               "flex-direction": "column",
               "align-items": "center",
-              height: "90px",
-              "justify-content": "space-between",
+              height: "180px",
+              "justify-content": "space-evenly",
             }}
           >
+            <button
+              style={{
+                width: "250px",
+                height: "36px",
+                "text-align": "center",
+                background: "black",
+                color: "white",
+                "border-radius": "0.375rem",
+                "font-size": "16px",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate(`/session/${params.code}`)}
+            >
+              Back
+            </button>
+            <button
+              style={{
+                width: "250px",
+                height: "36px",
+                "text-align": "center",
+                background: "black",
+                color: "white",
+                "border-radius": "0.375rem",
+                "font-size": "16px",
+                cursor: "pointer",
+              }}
+              onClick={handleSubmit}
+            >
+              Enter
+            </button>
             <A
               style={{
                 width: "250px",
@@ -156,21 +188,6 @@ export default function SessionPage() {
             >
               Add New Child
             </A>
-            <button
-              style={{
-                width: "250px",
-                height: "36px",
-                "text-align": "center",
-                background: "black",
-                color: "white",
-                "border-radius": "0.375rem",
-                "font-size": "16px",
-                cursor: "pointer",
-              }}
-              onClick={handleSubmit}
-            >
-              Enter
-            </button>
           </section>
         </div>
       </main>

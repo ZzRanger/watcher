@@ -23,6 +23,8 @@ export default function Person({
         width: "100%",
         "padding-left": "8px",
         cursor: "pointer",
+        "box-sizing": "border-box",
+        "border-bottom": "1px solid gray",
       }}
     >
       <div style={{ "font-size": "20px" }}>{personData.name}</div>

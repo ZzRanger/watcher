@@ -38,12 +38,12 @@ export default function Home() {
   return (
     <div>
       <main class={styles.main}>
-        <article>
+        <article class={styles.article}>
           <img src="owl_two.png" width="100px" height="75px" alt="Solid logo" />
           <h1>Watcher</h1>
           <p>We watch so you don't have to</p>
         </article>
-        <article style={{ gap: "10px" }}>
+        <article style={{ gap: "10px" }} class={styles.article}>
           <input
             value={code()}
             onInput={(e) => setCode(e.target.value)}
@@ -59,7 +59,11 @@ export default function Home() {
           </button>
         </article>
 
-        <article class={styles.article} style={{ gap: "10px" }}>
+        <article
+          class={styles.article}
+          style={{ gap: "10px" }}
+          class={styles.article}
+        >
           <button
             style={{ background: "black", color: "white" }}
             onClick={createSession}
