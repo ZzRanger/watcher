@@ -1,7 +1,7 @@
-import { supabase } from "~/root";
-import { For, createResource, createSignal } from "solid-js";
-import { A, RouteDataArgs, useParams, useRouteData } from "solid-start";
-import Person from "~/components/Person";
+import { supabase } from '~/root';
+import { For, createResource, createSignal } from 'solid-js';
+import { A, RouteDataArgs, useParams, useRouteData } from 'solid-start';
+import Person from '~/components/Person';
 
 export function routeData({ params }: RouteDataArgs) {
   // load some data
@@ -9,15 +9,15 @@ export function routeData({ params }: RouteDataArgs) {
   const [peopleData, { mutate: mutatePeopleData, refetch: refetchPeopleData }] =
     createResource(async () => {
       const { data, error } = await supabase
-        .from("check_in")
+        .from('check_in')
         .select(
           `
           *,
       person(*)
       `
         )
-        .eq("session", params.code)
-        .is("check_out_time", null);
+        .eq('session', params.code)
+        .is('check_out_time', null);
 
       if (error === null) return data;
       return error;
@@ -25,14 +25,16 @@ export function routeData({ params }: RouteDataArgs) {
 
   const [sessionData] = createResource(async () => {
     const { data, error } = await supabase
-      .from("session")
+      .from('session')
       .select()
-      .eq("id", params.code)
+      .eq('id', params.code)
       .single();
 
     if (error === null) return data;
     return error;
   });
+  console.log('HI');
+  console.log(peopleData());
 
   return { peopleData, mutatePeopleData, refetchPeopleData, sessionData };
 }
@@ -60,11 +62,11 @@ export default function SessionPage() {
 
     for (const id of selectedIds()) {
       const { data, error } = await supabase
-        .from("check_in")
+        .from('check_in')
         .update({ check_out_time: currentTime })
-        .eq("person", id);
+        .eq('person', id);
       if (error) {
-        alert("ERROR");
+        alert('ERROR');
       }
     }
     refetchPeopleData();
@@ -75,22 +77,22 @@ export default function SessionPage() {
     <div>
       <main
         style={{
-          display: "flex",
-          "flex-direction": "column",
-          "align-items": "center",
-          "padding-top": "40px",
-          "padding-bottom": "40px",
-          height: "100vh",
-          "box-sizing": "border-box",
+          display: 'flex',
+          'flex-direction': 'column',
+          'align-items': 'center',
+          'padding-top': '40px',
+          'padding-bottom': '40px',
+          height: '100vh',
+          'box-sizing': 'border-box',
         }}
       >
         <div
           style={{
-            width: "24px",
-            height: "24px",
-            position: "absolute",
-            top: "20px",
-            left: "20px",
+            width: '24px',
+            height: '24px',
+            position: 'absolute',
+            top: '20px',
+            left: '20px',
           }}
         >
           <A href="/">
@@ -114,11 +116,11 @@ export default function SessionPage() {
 
         <div
           style={{
-            width: "24px",
-            height: "24px",
-            position: "absolute",
-            top: "20px",
-            right: "20px",
+            width: '24px',
+            height: '24px',
+            position: 'absolute',
+            top: '20px',
+            right: '20px',
           }}
         >
           <A href="settings">
@@ -145,11 +147,11 @@ export default function SessionPage() {
         </div>
         <div
           style={{
-            width: "24px",
-            height: "24px",
-            position: "absolute",
-            top: "20px",
-            right: "60px",
+            width: '24px',
+            height: '24px',
+            position: 'absolute',
+            top: '20px',
+            right: '60px',
           }}
         >
           <A href="qrcode">
@@ -175,17 +177,41 @@ export default function SessionPage() {
             </svg>
           </A>
         </div>
+        <div
+          style={{
+            width: '24px',
+            height: '24px',
+            position: 'absolute',
+            top: '20px',
+            right: '100px',
+          }}
+        >
+          <A href="report">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16 11.78L20.24 4.45L21.97 5.45L16.74 14.5L10.23 10.75L5.46 19H22V21H2V3H4V17.54L9.5 8L16 11.78Z"
+                fill="black"
+              />
+            </svg>
+          </A>
+        </div>
 
         <h1>
           {!sessionData.loading
-            ? sessionData()!.name ?? "Session name"
-            : "Session name"}
+            ? sessionData()!.name ?? 'Session name'
+            : 'Session name'}
         </h1>
         <div
           style={{
-            "padding-top": "4px",
-            "text-align": "center",
-            "font-size": "16px",
+            'padding-top': '4px',
+            'text-align': 'center',
+            'font-size': '16px',
           }}
         >
           Join Code: {params.code}
@@ -193,22 +219,22 @@ export default function SessionPage() {
 
         <section
           style={{
-            display: "flex",
-            "flex-direction": "column",
-            "justify-content": "space-between",
-            height: "100%",
+            display: 'flex',
+            'flex-direction': 'column',
+            'justify-content': 'space-between',
+            height: '100%',
           }}
         >
           <article
             style={{
-              display: "flex",
-              "flex-direction": "column",
-              "align-items": "center",
-              "margin-top": "12px",
-              "margin-bottom": "12px",
+              display: 'flex',
+              'flex-direction': 'column',
+              'align-items': 'center',
+              'margin-top': '12px',
+              'margin-bottom': '12px',
             }}
           >
-            <div style={{ "font-size": "24px" }}>Checked-in children</div>
+            <div style={{ 'font-size': '24px' }}>Checked-in children</div>
             {/* <input
               style={{
                 width: "250px",
@@ -224,13 +250,13 @@ export default function SessionPage() {
             /> */}
             <article
               style={{
-                width: "100%",
-                height: "45vh",
-                "overflow-y": "scroll",
-                "overflow-x": "hidden",
-                border: "1px solid gray",
-                "border-radius": "0.375rem",
-                margin: "2px",
+                width: '100%',
+                height: '45vh',
+                'overflow-y': 'scroll',
+                'overflow-x': 'hidden',
+                border: '1px solid gray',
+                'border-radius': '0.375rem',
+                margin: '2px',
               }}
             >
               <For each={peopleData() as any[] | null}>
@@ -238,7 +264,7 @@ export default function SessionPage() {
                   return (
                     <div
                       style={{
-                        background: `${index() % 2 == 0 ? "lightgray" : ""}`,
+                        background: `${index() % 2 == 0 ? 'lightgray' : ''}`,
                       }}
                     >
                       <Person
@@ -253,46 +279,48 @@ export default function SessionPage() {
             </article>
           </article>
           <div>
-            {!peopleData.loading ? peopleData()!.length : "0"} children
-            currently checked in
+            {!peopleData.loading && peopleData().length > 0
+              ? peopleData()!.length
+              : '0'}{' '}
+            children currently checked in
           </div>
           <article
             style={{
-              height: "100px",
-              display: "flex",
-              "flex-direction": "column",
-              "justify-content": "space-evenly",
+              height: '100px',
+              display: 'flex',
+              'flex-direction': 'column',
+              'justify-content': 'space-evenly',
             }}
           >
             <A
               href="checkin"
               style={{
-                width: "250px",
-                height: "36px",
-                "text-align": "center",
-                "text-decoration": "none",
-                display: "flex",
-                "flex-direction": "column",
-                "justify-content": "center",
-                background: "black",
-                color: "white",
-                "border-radius": "0.375rem",
-                "font-size": "16px",
-                cursor: "pointer",
+                width: '250px',
+                height: '36px',
+                'text-align': 'center',
+                'text-decoration': 'none',
+                display: 'flex',
+                'flex-direction': 'column',
+                'justify-content': 'center',
+                background: 'black',
+                color: 'white',
+                'border-radius': '0.375rem',
+                'font-size': '16px',
+                cursor: 'pointer',
               }}
             >
               Check-in
             </A>
             <button
               style={{
-                width: "250px",
-                height: "36px",
-                "text-align": "center",
-                background: "black",
-                color: "white",
-                "border-radius": "0.375rem",
-                "font-size": "16px",
-                cursor: "pointer",
+                width: '250px',
+                height: '36px',
+                'text-align': 'center',
+                background: 'black',
+                color: 'white',
+                'border-radius': '0.375rem',
+                'font-size': '16px',
+                cursor: 'pointer',
               }}
               onClick={handleSubmit}
             >

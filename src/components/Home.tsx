@@ -1,17 +1,17 @@
-import { supabase } from "~/root";
-import styles from "./Home.module.css";
-import { createUniquSessionId } from "~/utils/utils";
-import { A, useNavigate } from "solid-start";
-import { createSignal } from "solid-js";
-import QRCodeSVG from "solid-qr-code";
+import { supabase } from '~/root';
+import styles from './Home.module.css';
+import { createUniquSessionId } from '~/utils/utils';
+import { A, useNavigate } from 'solid-start';
+import { createSignal } from 'solid-js';
+import QRCodeSVG from 'solid-qr-code';
 
 export default function Home() {
   const navigate = useNavigate();
-  const [code, setCode] = createSignal("");
+  const [code, setCode] = createSignal('');
 
   const createSession = async () => {
     const { data, error } = await supabase
-      .from("session")
+      .from('session')
       .insert({ id: createUniquSessionId() })
       .select();
 
@@ -23,16 +23,16 @@ export default function Home() {
   const handleJoinRoom = async () => {
     // Check if the room exists first xD
     const { data, error } = await supabase
-      .from("session")
+      .from('session')
       .select()
-      .eq("id", code())
+      .eq('id', code())
       .single();
 
     if (data) {
       console.log(data);
       navigate(`/session/${code()}`);
     } else {
-      alert("Session code not found. Please try again");
+      alert('Session code not found. Please try again');
     }
   };
 
@@ -44,7 +44,7 @@ export default function Home() {
           <h1>Watcher</h1>
           <p>We watch so you don't have to</p>
         </article>
-        <article style={{ gap: "10px" }} class={styles.article}>
+        <article style={{ gap: '10px' }} class={styles.article}>
           <input
             value={code()}
             onInput={(e) => setCode(e.target.value)}
@@ -52,7 +52,7 @@ export default function Home() {
             class={styles.input}
           />
           <button
-            style={{ background: "black", color: "white" }}
+            style={{ background: 'black', color: 'white' }}
             class={styles.button}
             onClick={handleJoinRoom}
           >
@@ -60,13 +60,9 @@ export default function Home() {
           </button>
         </article>
 
-        <article
-          class={styles.article}
-          style={{ gap: "10px" }}
-          class={styles.article}
-        >
+        <article class={styles.article} style={{ gap: '10px' }}>
           <button
-            style={{ background: "black", color: "white" }}
+            style={{ background: 'black', color: 'white' }}
             onClick={createSession}
             class={styles.button}
           >
@@ -76,12 +72,12 @@ export default function Home() {
           <A
             class={styles.button}
             style={{
-              "text-decoration": "none",
-              display: "flex",
-              "flex-direction": "column",
-              "justify-content": "center",
-              background: "black",
-              color: "white",
+              'text-decoration': 'none',
+              display: 'flex',
+              'flex-direction': 'column',
+              'justify-content': 'center',
+              background: 'black',
+              color: 'white',
             }}
             href="/session/admin"
           >
