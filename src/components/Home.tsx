@@ -38,10 +38,10 @@ export default function Home() {
 
   return (
     <div>
-      <main class={styles.main}>
-        <article class={styles.article}>
+      <main class="flex-col-center">
+        <article class="flex-col-center">
           <img src="owl_two.png" width="100px" height="75px" alt="Solid logo" />
-          <h1>Watcher</h1>
+          <h1 class="text-[50px] text-primary">Watcher</h1>
           <p>We watch so you don't have to</p>
         </article>
         <article style={{ gap: '10px' }} class={styles.article}>

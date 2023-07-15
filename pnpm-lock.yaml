@@ -1,7 +1,9 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@3.0.0': link:rollup/@3.0.0
   '@mdx-js/rollup': ^2.3.0
+  '@rollup/pluginutils': 3.0.0
   '@solidjs/meta': ^0.28.2
   '@solidjs/router': ^0.8.2
   '@supabase/supabase-js': ^2.20.0
@@ -9,6 +11,8 @@ specifiers:
   autoprefixer: ^10.4.14
   esbuild: ^0.14.54
   postcss: ^8.4.22
+  prettier: ^3.0.0
+  prettier-plugin-tailwindcss: ^0.4.1
   solid-js: ^1.7.2
   solid-qr-code: ^0.0.8
   solid-start: ^0.2.26
@@ -21,12 +25,14 @@ specifiers:
   vite: ^4.1.4
 
 dependencies:
-  '@mdx-js/rollup': 2.3.0
+  '@3.0.0': link:rollup/@3.0.0
+  '@mdx-js/rollup': 2.3.0_rollup@3.20.3
+  '@rollup/pluginutils': 3.0.0_rollup@3.20.3
   '@solidjs/meta': 0.28.4_solid-js@1.7.3
   '@solidjs/router': 0.8.2_solid-js@1.7.3
   '@supabase/supabase-js': 2.20.0
   solid-js: 1.7.3
-  solid-qr-code: 0.0.8_solid-js@1.7.3
+  solid-qr-code: 0.0.8_qr.js@0.0.0+solid-js@1.7.3
   solid-start: 0.2.26_gm4kotxod2e4pnudq2z6hbgeuq
   solid-start-vercel: 0.2.26_snf4gta5rrnyfgynsqghfnmr3i
   undici: 5.21.2
@@ -36,6 +42,8 @@ devDependencies:
   autoprefixer: 10.4.14_postcss@8.4.22
   esbuild: 0.14.54
   postcss: 8.4.22
+  prettier: 3.0.0
+  prettier-plugin-tailwindcss: 0.4.1_prettier@3.0.0
   solid-start-node: 0.2.26_h4pddsgofgwgmu5p4dka5yg3sq
   supabase: 1.58.1
   tailwindcss: 3.3.3
@@ -1424,13 +1432,14 @@ packages:
       - supports-color
     dev: false
 
-  /@mdx-js/rollup/2.3.0:
+  /@mdx-js/rollup/2.3.0_rollup@3.20.3:
     resolution: {integrity: sha512-wLvRfJS/M4UmdqTd+WoaySEE7q4BIejYf1xAHXYvtT1du/1Tl/z2450Gg2+Hu7fh05KwRRiehiTP9Yc/Dtn0fA==}
     peerDependencies:
       rollup: '>=2'
     dependencies:
       '@mdx-js/mdx': 2.3.0
-      '@rollup/pluginutils': 5.0.2
+      '@rollup/pluginutils': 5.0.2_rollup@3.20.3
+      rollup: 3.20.3
       source-map: 0.7.4
       vfile: 5.3.7
     transitivePeerDependencies:
@@ -1504,26 +1513,22 @@ packages:
       resolve: 1.22.3
       rollup: 3.20.3
 
+  /@rollup/pluginutils/3.0.0_rollup@3.20.3:
+    resolution: {integrity: sha512-qBbGQQaUUiId/lBU9VMeYlVLOoRNvz1fV8HWY5tiGDpI2gdPZHbmOfCjzSdXPhdq3XOfyWvXEBlIPbnM3+9ogQ==}
+    engines: {node: '>= 8.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0
+    dependencies:
+      estree-walker: 0.6.1
+      rollup: 3.20.3
+    dev: false
+
   /@rollup/pluginutils/4.2.1:
     resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
     engines: {node: '>= 8.0.0'}
     dependencies:
       estree-walker: 2.0.2
       picomatch: 2.3.1
-
-  /@rollup/pluginutils/5.0.2:
-    resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0||^3.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@types/estree': 1.0.0
-      estree-walker: 2.0.2
-      picomatch: 2.3.1
-    dev: false
 
   /@rollup/pluginutils/5.0.2_rollup@3.20.3:
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
@@ -2538,6 +2543,10 @@ packages:
     dependencies:
       '@types/estree-jsx': 1.0.0
       '@types/unist': 2.0.6
+    dev: false
+
+  /estree-walker/0.6.1:
+    resolution: {integrity: sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w==}
     dev: false
 
   /estree-walker/2.0.2:
@@ -3700,6 +3709,67 @@ packages:
       source-map-js: 1.0.2
     dev: true
 
+  /prettier-plugin-tailwindcss/0.4.1_prettier@3.0.0:
+    resolution: {integrity: sha512-hwn2EiJmv8M+AW4YDkbjJ6HlZCTzLyz1QlySn9sMuKV/Px0fjwldlB7tol8GzdgqtkdPtzT3iJ4UzdnYXP25Ag==}
+    engines: {node: '>=12.17.0'}
+    peerDependencies:
+      '@ianvs/prettier-plugin-sort-imports': '*'
+      '@prettier/plugin-pug': '*'
+      '@shopify/prettier-plugin-liquid': '*'
+      '@shufo/prettier-plugin-blade': '*'
+      '@trivago/prettier-plugin-sort-imports': '*'
+      prettier: ^2.2 || ^3.0
+      prettier-plugin-astro: '*'
+      prettier-plugin-css-order: '*'
+      prettier-plugin-import-sort: '*'
+      prettier-plugin-jsdoc: '*'
+      prettier-plugin-marko: '*'
+      prettier-plugin-organize-attributes: '*'
+      prettier-plugin-organize-imports: '*'
+      prettier-plugin-style-order: '*'
+      prettier-plugin-svelte: '*'
+      prettier-plugin-twig-melody: '*'
+    peerDependenciesMeta:
+      '@ianvs/prettier-plugin-sort-imports':
+        optional: true
+      '@prettier/plugin-pug':
+        optional: true
+      '@shopify/prettier-plugin-liquid':
+        optional: true
+      '@shufo/prettier-plugin-blade':
+        optional: true
+      '@trivago/prettier-plugin-sort-imports':
+        optional: true
+      prettier-plugin-astro:
+        optional: true
+      prettier-plugin-css-order:
+        optional: true
+      prettier-plugin-import-sort:
+        optional: true
+      prettier-plugin-jsdoc:
+        optional: true
+      prettier-plugin-marko:
+        optional: true
+      prettier-plugin-organize-attributes:
+        optional: true
+      prettier-plugin-organize-imports:
+        optional: true
+      prettier-plugin-style-order:
+        optional: true
+      prettier-plugin-svelte:
+        optional: true
+      prettier-plugin-twig-melody:
+        optional: true
+    dependencies:
+      prettier: 3.0.0
+    dev: true
+
+  /prettier/3.0.0:
+    resolution: {integrity: sha512-zBf5eHpwHOGPC47h0zrPyNn+eAEIdEzfywMoYn2XPi0P44Zp0tSq64rq0xAREh4auw2cJZHo9QUob+NqCQky4g==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dev: true
+
   /property-information/6.2.0:
     resolution: {integrity: sha512-kma4U7AFCTwpqq5twzC1YVIDXSqg6qQK6JN0smOw8fgRy1OkMi0CYSzFmsy6dnqSenamAtj0CyXMUJ1Mf6oROg==}
     dev: false
@@ -3929,10 +3999,11 @@ packages:
       csstype: 3.1.2
       seroval: 0.5.1
 
-  /solid-qr-code/0.0.8_solid-js@1.7.3:
+  /solid-qr-code/0.0.8_qr.js@0.0.0+solid-js@1.7.3:
     resolution: {integrity: sha512-K7LC3IKvyRag6WW7/ijJl32pBmoC3EzZ7AuydyaAVKSmlwukJmqvrFkrxaA1bOWabYJhzP9qwLbjDVlCUP2BwQ==}
     engines: {node: '>=10', yarn: '>=1.22.5'}
     peerDependencies:
+      qr.js: ^0.0.0
       solid-js: ^1.4.8
     dependencies:
       qr.js: 0.0.0
