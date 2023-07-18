@@ -4,6 +4,7 @@ import { createUniquSessionId } from '~/utils/utils';
 import { A, useNavigate } from 'solid-start';
 import { createSignal } from 'solid-js';
 import QRCodeSVG from 'solid-qr-code';
+import Button from './Button';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -37,54 +38,52 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <main class="flex-col-center">
-        <article class="flex-col-center">
-          <img src="owl_two.png" width="100px" height="75px" alt="Solid logo" />
-          <h1 class="text-[50px] text-primary">Watcher</h1>
-          <p>We watch so you don't have to</p>
-        </article>
-        <article style={{ gap: '10px' }} class={styles.article}>
-          <input
-            value={code()}
-            onInput={(e) => setCode(e.target.value)}
-            placeholder="Session code"
-            class={styles.input}
-          />
+    <main class="flex-col-center h-screen w-screen justify-between py-[10vh]">
+      <article class="flex-col-center">
+        <img class="h-[75px] w-[100px]" src="owl_two.png" alt="Solid logo" />
+        <h1 class=" text-[50px] font-bold text-primary">Watcher</h1>
+        <p class="mt-[10px] text-[16px] font-bold text-primary">
+          Always watching <span class="underline">for you</span>
+        </p>
+      </article>
+      <article class="flex-col-center relative gap-y-[10px]">
+        <img
+          class=" absolute right-0 top-[-100px] w-[130px]"
+          src="joinText.png"
+          alt="Solid logo"
+        />
+        <input
+          value={code()}
+          onInput={(e) => setCode(e.target.value)}
+          placeholder="Code"
+          class="h-[59px] w-[295px] rounded-[200px] bg-secondary text-center"
+        />
+        <Button class="bg-primary text-white" onClick={handleJoinRoom}>
+          Join Room
+        </Button>
+      </article>
+      <article class="flex-col-center gap-y-[10px]">
+        <div class="flex w-[360px] flex-row items-center  justify-between">
+          <hr class="m-auto h-0 w-40 border-dashed border-black" />
+          <div>Or</div>
+          <hr class="m-auto flex h-0 w-40 border-dashed border-black" />
+        </div>
+        <div class="flex flex-row gap-x-[18px]">
           <button
-            style={{ background: 'black', color: 'white' }}
-            class={styles.button}
-            onClick={handleJoinRoom}
-          >
-            Join Room
-          </button>
-        </article>
-
-        <article class={styles.article} style={{ gap: '10px' }}>
-          <button
-            style={{ background: 'black', color: 'white' }}
             onClick={createSession}
-            class={styles.button}
+            class="h-[27px] w-[154px] rounded-[20px] border-2 border-black"
           >
             Create Session
           </button>
 
           <A
-            class={styles.button}
-            style={{
-              'text-decoration': 'none',
-              display: 'flex',
-              'flex-direction': 'column',
-              'justify-content': 'center',
-              background: 'black',
-              color: 'white',
-            }}
+            class="flex h-[27px] w-[154px] items-center justify-center rounded-[20px] border-2  border-solid border-black"
             href="/session/admin"
           >
             Admin Panel
           </A>
-        </article>
-      </main>
-    </div>
+        </div>
+      </article>
+    </main>
   );
 }
