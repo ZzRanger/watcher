@@ -1,12 +1,18 @@
-import { createResource } from "solid-js";
+import { createResource } from 'solid-js';
 import {
   A,
   RouteDataArgs,
   useNavigate,
   useParams,
   useRouteData,
-} from "solid-start";
-import { supabase } from "~/root";
+} from 'solid-start';
+import BackComponent from '~/components/BackComponent';
+import Button from '~/components/Button';
+import Classroom from '~/components/Classroom';
+import Fab from '~/components/Fab';
+import H1 from '~/components/H1';
+import BackIcon from '~/components/icons/BackIcon';
+import { supabase } from '~/root';
 
 export function routeData({ params }: RouteDataArgs) {
   // load some data
@@ -14,9 +20,9 @@ export function routeData({ params }: RouteDataArgs) {
   const [sessionData, { mutate: mutateSessionData }] = createResource(
     async () => {
       const { data, error } = await supabase
-        .from("session")
+        .from('session')
         .select()
-        .eq("id", params.code)
+        .eq('id', params.code)
         .single();
 
       if (error === null) return data;
@@ -36,104 +42,44 @@ export default function Settings() {
 
   const handleSubmit = async () => {
     const { data, error } = await supabase
-      .from("session")
+      .from('session')
       .update({
         ...sessionData(),
       })
-      .eq("id", sessionData()!.id)
+      .eq('id', sessionData()!.id)
       .select();
 
     if (data) {
       navigate(`/session/${params.code}`);
     }
     if (error) {
-      alert("An error has occured");
+      alert('An error has occured');
     }
   };
 
   return (
-    <div>
-      <main
-        style={{
-          display: "flex",
-          "flex-direction": "column",
-          "align-items": "center",
-          "padding-top": "40px",
-          "padding-bottom": "40px",
-          height: "100vh",
-          "box-sizing": "border-box",
-        }}
-      >
-        <section
-          style={{
-            display: "flex",
-            "flex-direction": "column",
-            "align-items": "center",
-          }}
-        >
-          <article
-            style={{
-              display: "flex",
-              "flex-direction": "column",
-              "align-items": "center",
-            }}
-          >
-            <h1>Settings</h1>
-            <h3>Session Name</h3>
-          </article>
-
+    <main class="flex-col-center layout gap-y-[20px]">
+      <BackComponent />
+      <H1>Settings</H1>
+      <section class="flex-col-center gap-y-[20px]">
+        <article class="flex flex-col">
+          <h3 class="ml-5 self-start text-xl font-bold">Name</h3>
           <input
-            style={{
-              width: "250px",
-              height: "36px",
-              "padding-left": "8px",
-              "box-sizing": "border-box",
-              "border-radius": "0.5rem",
-              border: "1px solid gray",
-              "font-size": "16px",
-            }}
-            value={!sessionData.loading ? sessionData()!.name : ""}
-            onChange={(e) =>
-              mutateSessionData({ ...sessionData(), name: e.target.value })
-            }
-            placeholder="Ex. Monday Morning"
+            class=" h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
+            placeholder="Ex. Bob"
           />
-          <A
-            href={`/session/${params.code}`}
-            style={{
-              width: "250px",
-              height: "36px",
-              "text-align": "center",
-              "text-decoration": "none",
-              display: "flex",
-              "flex-direction": "column",
-              "justify-content": "center",
-              background: "black",
-              color: "white",
-              "border-radius": "0.375rem",
-              "font-size": "16px",
-              cursor: "pointer",
-            }}
-          >
-            Back
-          </A>
-          <button
-            style={{
-              width: "250px",
-              height: "36px",
-              "text-align": "center",
-              background: "black",
-              color: "white",
-              "border-radius": "0.375rem",
-              "font-size": "16px",
-              cursor: "pointer",
-            }}
-            onClick={handleSubmit}
-          >
-            Update Session
-          </button>
-        </section>
-      </main>
-    </div>
+        </article>
+        <Classroom name="test" handleSelect={() => console.log('HI')} />
+        <button class="flex items-center justify-center rounded-[50px] border-2 border-solid border-[#999999] px-8 py-3 text-[#444444]">
+          + Add New Classroom
+        </button>
+      </section>
+
+      <div class="absolute bottom-[5vh] left-0 flex h-10 w-screen items-center justify-center">
+        <Fab onClick={handleSubmit} class="bg-primary text-xl text-white">
+          Save
+        </Fab>
+      </div>
+    </main>
   );
 }

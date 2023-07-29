@@ -1,5 +1,7 @@
 import { For, createResource } from 'solid-js';
 import { A, RouteDataArgs, useParams, useRouteData } from 'solid-start';
+import H1 from '~/components/H1';
+import Navbar from '~/components/Navbar';
 import Person from '~/components/Person';
 import { supabase } from '~/root';
 
@@ -49,34 +51,36 @@ export default function Report() {
   // Add SQL code to get all total check-ins
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        'flex-direction': 'column',
-        'align-items': 'center',
-        padding: '16px',
-        'justify-content': 'center',
-        height: '100vh',
-      }}
-    >
-      <h1>{sessionData()?.name}</h1>
-      <p>
-        Created: {new Date(sessionData()?.created_at).toLocaleString('en-US')}
-      </p>
-      <h3>Attendance:</h3>
-      <For each={peopleData() as any[] | null}>
-        {(personData, index) => {
-          return (
-            <div
-              style={{
-                background: `${index() % 2 == 0 ? 'lightgray' : ''}`,
-              }}
-            >
-              {personData.person.name}
-            </div>
-          );
-        }}
-      </For>
-    </div>
+    <main class="flex-col-center layout gap-y-[20px]">
+      <Navbar />
+      <section class="flex-col-center">
+        <H1>Report</H1>
+        <p>Name: {sessionData()?.name}</p>
+        <p>
+          Created: {new Date(sessionData()?.created_at).toLocaleString('en-US')}
+        </p>
+        <h3>Attendance:</h3>
+      </section>
+      <section class="w-[300px]">
+        <input
+          class="h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
+          placeholder="Search"
+          onChange={(e) => {}}
+        />
+        <For each={peopleData() as any[] | null}>
+          {(personData, index) => {
+            return (
+              <div
+                style={{
+                  background: `${index() % 2 == 0 ? 'lightgray' : ''}`,
+                }}
+              >
+                {personData.person.name}
+              </div>
+            );
+          }}
+        </For>
+      </section>
+    </main>
   );
 }

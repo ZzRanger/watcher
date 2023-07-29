@@ -1,9 +1,7 @@
 import { supabase } from '~/root';
-import styles from './Home.module.css';
 import { createUniquSessionId } from '~/utils/utils';
 import { A, useNavigate } from 'solid-start';
 import { createSignal } from 'solid-js';
-import QRCodeSVG from 'solid-qr-code';
 import Button from './Button';
 
 export default function Home() {
@@ -38,7 +36,7 @@ export default function Home() {
   };
 
   return (
-    <main class="flex-col-center h-screen w-screen justify-between py-[10vh]">
+    <main class="flex-col-center layout w-screen justify-between">
       <article class="flex-col-center">
         <img class="h-[75px] w-[100px]" src="owl_two.png" alt="Solid logo" />
         <h1 class=" text-[50px] font-bold text-primary">Watcher</h1>
@@ -71,13 +69,13 @@ export default function Home() {
         <div class="flex flex-row gap-x-[18px]">
           <button
             onClick={createSession}
-            class="h-[27px] w-[154px] rounded-[20px] border-2 border-black"
+            class="h-[50px] w-[154px] rounded-[10px] border-2 border-black"
           >
             Create Session
           </button>
 
           <A
-            class="flex h-[27px] w-[154px] items-center justify-center rounded-[20px] border-2  border-solid border-black"
+            class="flex h-[50px] w-[154px] items-center justify-center rounded-[10px] border-2  border-solid border-black"
             href="/session/admin"
           >
             Admin Panel
