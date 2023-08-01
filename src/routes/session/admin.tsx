@@ -1,36 +1,70 @@
-import { For, createResource } from 'solid-js';
+import { For, ResourceFetcher, createResource } from 'solid-js';
 import { A, RouteDataArgs, useRouteData } from 'solid-start';
 import BackComponent from '~/components/BackComponent';
 import H1 from '~/components/H1';
-import Person from '~/components/Person';
+
 import PersonInfo from '~/components/PersonInfo';
-import BackIcon from '~/components/icons/BackIcon';
+
 import { supabase } from '~/root';
+import { PersonType, SessionType } from '~/utils/models';
+import { formatCheckInTime } from '~/utils/utils';
 
-export function routeData({ params }: RouteDataArgs) {
-  // load some data
+const test: () => void = async () => {
+  console.log('HI');
+};
 
-  const [sessionData] = createResource(async () => {
+function testa(): void {
+  console.log('HM');
+}
+
+test();
+
+testa();
+const fetchSessionDataa: ResourceFetcher<true, SessionType[]> = async () => {
+  try {
     const { data, error } = await supabase.from('session').select();
 
-    if (error === null) return data;
-    return error;
-  });
+    if (error === null) return data as SessionType[];
+    throw error;
+  } catch (e) {
+    // Presumably log errors here
+    console.log(e);
+    throw e;
+  }
+};
+
+async function fetchSessionData() {
+  try {
+    const { data, error } = await supabase.from('session').select();
+
+    if (error === null) return data as SessionType[];
+    throw error;
+  } catch (e) {
+    // Presumably log errors here
+    console.log(e);
+    throw e;
+  }
+}
+
+export function routeData({ params }: RouteDataArgs) {
+  const [sessionData] = createResource(fetchSessionData);
 
   const [peopleData] = createResource(async () => {
     const { data, error } = await supabase.from('person').select();
 
-    if (error === null) return data;
-    return error;
+    try {
+      if (error === null) return data as PersonType[];
+      throw error;
+    } catch (e) {
+      console.log('Presumably add logging here');
+      throw e;
+    }
   });
 
   return { sessionData, peopleData };
 }
 
 export default function AdminDashboard() {
-  // Should show all the sessions created
-  // As well as all the children
-
   const { sessionData, peopleData } = useRouteData<typeof routeData>();
 
   return (
@@ -44,12 +78,12 @@ export default function AdminDashboard() {
         </div>
       </section>
       <section class="flex-col-center w-[300px]">
-        <input
+        {/* <input
           class="h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
           placeholder="Search"
           onChange={(e) => {}}
-        />
-        <For each={peopleData() as any[] | null}>
+        /> */}
+        <For each={peopleData() as PersonType[] | undefined}>
           {(person, _) => {
             return (
               <A href={`/editChild/${person.id}`} class="w-[300px]">
@@ -66,17 +100,19 @@ export default function AdminDashboard() {
         </div>
       </section>
       <section class="flex-col-center w-[300px]">
-        <input
+        {/* <input
           class="h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
           placeholder="Search"
           onChange={(e) => {}}
-        />
-        <For each={sessionData() as any[] | null}>
+        /> */}
+        <For each={sessionData() as SessionType[] | null}>
           {(session, _) => {
             return (
               <A href={`/session/${session.id}`} class="w-full">
                 <article class="flex h-fit w-full flex-col items-start border-b-[1px] border-solid border-b-[#737373] px-[13px] py-[10px]">
-                  <div class="text-base text-[#737373]">Created: 10:00AM</div>
+                  <div class="text-base text-[#737373]">
+                    Created: {formatCheckInTime(session.created_at)}
+                  </div>
                   <div class="text-xl font-medium">
                     {session.name ?? 'session name'}
                   </div>

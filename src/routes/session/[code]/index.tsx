@@ -6,9 +6,16 @@ import Navbar from '~/components/Navbar';
 import Fab from '~/components/Fab';
 import H1 from '~/components/H1';
 
-export function routeData({ params }: RouteDataArgs) {
-  // load some data
+import { formatCheckInTime } from '~/utils/utils';
+import {
+  CheckinType,
+  ClassroomType,
+  PersonType,
+  SessionType,
+} from '~/utils/models';
+import { PostgrestError } from '@supabase/supabase-js';
 
+export function routeData({ params }: RouteDataArgs) {
   const [peopleData, { mutate: mutatePeopleData, refetch: refetchPeopleData }] =
     createResource(async () => {
       const { data, error } = await supabase
@@ -22,8 +29,24 @@ export function routeData({ params }: RouteDataArgs) {
         .eq('session', params.code)
         .is('check_out_time', null);
 
-      if (error === null) return data;
-      return error;
+      // TODO: Set up table properly in the future
+      const { data: classroomData, error: classroomDataError } = await supabase
+        .from('classroom')
+        .select();
+
+      if (classroomDataError !== null) throw error;
+      console.log(data);
+      console.log(classroomData.find((classroom) => classroom.id == 1));
+      const newData = data?.map((val) => {
+        return {
+          ...val,
+          classroom: classroomData?.find(
+            (classroom) => classroom.id === val.classroomId
+          )!.name,
+        };
+      }) as (CheckinType & PersonType & { classroom: string })[];
+
+      return newData ?? [];
     });
 
   const [sessionData] = createResource(async () => {
@@ -33,11 +56,9 @@ export function routeData({ params }: RouteDataArgs) {
       .eq('id', params.code)
       .single();
 
-    if (error === null) return data;
+    if (error === null) return data as SessionType;
     return error;
   });
-  console.log('HI');
-  console.log(peopleData());
 
   return { peopleData, mutatePeopleData, refetchPeopleData, sessionData };
 }
@@ -48,15 +69,22 @@ export default function SessionPage() {
     useRouteData<typeof routeData>();
   // Store all the selected ids here
   // Use a signal for now, modify if it's jank
-  const [selectedIds, setSelectedIds] = createSignal([] as any[]);
+  const [selectedIds, setSelectedIds] = createSignal([] as number[]);
 
   const params = useParams<{ code: string }>();
 
-  const handleSelect = (val: any) => {
-    if (selectedIds().includes(val)) {
-      setSelectedIds(selectedIds().filter((t) => t !== val));
+  const showSessionName = (session: ReturnType<typeof sessionData>) => {
+    if (session !== undefined && 'name' in session) {
+      return session.name as string;
+    }
+    return 'Session Name';
+  };
+
+  const handleSelect = (personId: number) => {
+    if (selectedIds().includes(personId)) {
+      setSelectedIds(selectedIds().filter((t) => t !== personId));
     } else {
-      setSelectedIds([...selectedIds(), val]);
+      setSelectedIds([...selectedIds(), personId]);
     }
   };
 
@@ -82,13 +110,10 @@ export default function SessionPage() {
   return (
     <main class="flex-col-center layout gap-y-[40px]">
       <Navbar />
-
       <article class="flex-col-center gap-y-[10px]">
-        <H1>
-          {!sessionData.loading
-            ? sessionData()!.name ?? 'Session Name'
-            : 'Session name'}
-        </H1>
+        <Show when={sessionData()} fallback={'Session Name'}>
+          <H1>{showSessionName(sessionData())}</H1>
+        </Show>
         <button
           onClick={() => {
             navigator.clipboard.writeText(params.code);
@@ -102,19 +127,30 @@ export default function SessionPage() {
       </article>
 
       <section class="flex-col-center w-[300px]">
-        <input
+        {/* <input
           class="h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
           placeholder="Search"
           onChange={(e) => {}}
-        />
+        /> */}
         <article class="mt-2 w-full overflow-y-scroll">
-          <For each={peopleData() as any[] | null}>
-            {(personData, index) => {
+          <For
+            each={peopleData() as any[] | null}
+            fallback={
+              <div class=" flex-col-center gap-y-20 border-2 border-solid border-white text-center">
+                <div class="">No children currently checked in</div>
+                <div class="text-xl text-primary">
+                  Click the "Check-in" button below to get started
+                </div>
+              </div>
+            }
+          >
+            {(personData, _) => {
               return (
                 <div>
                   <Person
-                    personData={personData.person}
-                    checkinData={personData.check_in_time}
+                    person={personData.person}
+                    checkinTime={formatCheckInTime(personData.check_in_time)}
+                    classroom={personData.classroom}
                     handleSelect={handleSelect}
                   />
                 </div>

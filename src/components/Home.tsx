@@ -8,17 +8,6 @@ export default function Home() {
   const navigate = useNavigate();
   const [code, setCode] = createSignal('');
 
-  const createSession = async () => {
-    const { data, error } = await supabase
-      .from('session')
-      .insert({ id: createUniquSessionId() })
-      .select();
-
-    if (data) {
-      navigate(`/session/${data[0].id}`);
-    }
-  };
-
   const handleJoinRoom = async () => {
     // Check if the room exists first xD
     const { data, error } = await supabase
@@ -67,12 +56,12 @@ export default function Home() {
           <hr class="m-auto flex h-0 w-40 border-dashed border-black" />
         </div>
         <div class="flex flex-row gap-x-[18px]">
-          <button
-            onClick={createSession}
-            class="h-[50px] w-[154px] rounded-[10px] border-2 border-black"
+          <A
+            href="/session/create"
+            class="flex h-[50px] w-[154px] items-center justify-center rounded-[10px] border-2  border-solid border-black"
           >
             Create Session
-          </button>
+          </A>
 
           <A
             class="flex h-[50px] w-[154px] items-center justify-center rounded-[10px] border-2  border-solid border-black"

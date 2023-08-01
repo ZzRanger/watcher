@@ -1,9 +1,12 @@
 import { For, createResource } from 'solid-js';
 import { A, RouteDataArgs, useParams, useRouteData } from 'solid-start';
+import BackComponent from '~/components/BackComponent';
 import H1 from '~/components/H1';
 import Navbar from '~/components/Navbar';
 import Person from '~/components/Person';
 import { supabase } from '~/root';
+import { PersonType, SessionType } from '~/utils/models';
+import { formatReportDate, formatReportTime } from '~/utils/utils';
 
 const baseUrl = import.meta.env.VITE_VERCEL_URL;
 
@@ -19,8 +22,7 @@ export function routeData({ params }: RouteDataArgs) {
     person(*)
     `
       )
-      .eq('session', params.code)
-      .is('check_out_time', null);
+      .eq('session', params.code);
 
     if (error === null) return data;
     return error;
@@ -33,12 +35,9 @@ export function routeData({ params }: RouteDataArgs) {
       .eq('id', params.code)
       .single();
 
-    if (error === null) return data;
-    return error;
+    if (error === null) return data as SessionType;
+    throw error;
   });
-
-  console.log(peopleData());
-  console.log('HI');
 
   return { peopleData, sessionData };
 }
@@ -52,31 +51,41 @@ export default function Report() {
 
   return (
     <main class="flex-col-center layout gap-y-[20px]">
-      <Navbar />
-      <section class="flex-col-center">
+      <BackComponent />
+      <section class="flex-col-center gap-y-2">
         <H1>Report</H1>
         <p>Name: {sessionData()?.name}</p>
         <p>
-          Created: {new Date(sessionData()?.created_at).toLocaleString('en-US')}
+          Created:{' '}
+          {new Date(sessionData()?.created_at ?? '').toLocaleString('en-US')}
         </p>
         <h3>Attendance:</h3>
       </section>
       <section class="w-[300px]">
-        <input
-          class="h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
-          placeholder="Search"
-          onChange={(e) => {}}
-        />
         <For each={peopleData() as any[] | null}>
           {(personData, index) => {
+            console.log(personData);
             return (
-              <div
-                style={{
-                  background: `${index() % 2 == 0 ? 'lightgray' : ''}`,
-                }}
-              >
-                {personData.person.name}
-              </div>
+              <article class="flex h-fit w-full flex-row items-center border-b-[1px] border-solid border-b-[#737373] px-[13px] py-[10px]">
+                <div class="flex flex-grow flex-col items-start justify-between gap-y-2">
+                  <div class="text-base text-[#737373]">
+                    {formatReportTime(
+                      personData.check_in_time,
+                      personData.check_out_time
+                    )}
+                  </div>
+                  <div class="text-xl font-medium">
+                    {personData.person.name}
+                  </div>
+                </div>
+                <div class="self-start text-base text-[#737373]">
+                  {' '}
+                  {formatReportDate(
+                    personData.check_in_time,
+                    personData.check_out_time
+                  )}
+                </div>
+              </article>
             );
           }}
         </For>
