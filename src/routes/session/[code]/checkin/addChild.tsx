@@ -14,13 +14,15 @@ export default function AddChild() {
   const params = useParams<{ code: string }>();
 
   const handleSubmit = async () => {
+    if (name() === '' || parent() === '' || phoneNum() === '') {
+      return alert('Please add a name, parent, and phone number');
+    }
     const { data, error } = await supabase
       .from('person')
       .insert({ name: name(), parent: parent(), phone_number: phoneNum() })
       .select();
 
     if (data) {
-      alert('HI');
       navigate(`/session/${params.code}/checkin`);
     }
     if (error) {

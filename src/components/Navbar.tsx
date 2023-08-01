@@ -1,4 +1,4 @@
-import { A } from 'solid-start';
+import { A, useNavigate } from 'solid-start';
 import ReportIcon from '~/components/icons/ReportIcon';
 
 import SettingsIcon from '~/components/icons/SettingsIcon';
@@ -6,9 +6,10 @@ import BackIcon from '~/components/icons/BackIcon';
 import QRIcon from '~/components/icons/QRIcon';
 
 export default function Navbar() {
+  const navigate = useNavigate();
   return (
     <nav class="box-border flex w-screen flex-row justify-between px-8">
-      <button onClick={() => window.history.back()}>
+      <button onClick={() => navigate('/')}>
         <BackIcon />
       </button>
 

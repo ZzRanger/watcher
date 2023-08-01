@@ -9,30 +9,6 @@ import { supabase } from '~/root';
 import { PersonType, SessionType } from '~/utils/models';
 import { formatCheckInTime } from '~/utils/utils';
 
-const test: () => void = async () => {
-  console.log('HI');
-};
-
-function testa(): void {
-  console.log('HM');
-}
-
-test();
-
-testa();
-const fetchSessionDataa: ResourceFetcher<true, SessionType[]> = async () => {
-  try {
-    const { data, error } = await supabase.from('session').select();
-
-    if (error === null) return data as SessionType[];
-    throw error;
-  } catch (e) {
-    // Presumably log errors here
-    console.log(e);
-    throw e;
-  }
-};
-
 async function fetchSessionData() {
   try {
     const { data, error } = await supabase.from('session').select();
@@ -69,7 +45,7 @@ export default function AdminDashboard() {
 
   return (
     <main class="flex-col-center layout gap-y-[20px] overflow-y-scroll">
-      <BackComponent />
+      <BackComponent url="/" />
 
       <section class="flex-col-center gap-y-1">
         <H1>Children</H1>

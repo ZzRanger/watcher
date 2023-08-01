@@ -10,6 +10,9 @@ export default function ClassroomComponent({
   handleSelect: (classroomId: number) => void;
 }) {
   const [selected, setSelected] = createSignal(false);
+
+  // Add logic to delete a classroom here
+
   return (
     <article
       onClick={() => {
@@ -32,7 +35,7 @@ export default function ClassroomComponent({
         </label>
         <div class="text-xl font-semibold">{classroom.name}</div>
       </div>
-      <RemoveIcon />
+      {/* <RemoveIcon /> */}
     </article>
   );
 }

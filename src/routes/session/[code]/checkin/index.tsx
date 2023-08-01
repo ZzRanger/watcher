@@ -80,6 +80,8 @@ export default function SessionPage() {
   };
 
   const handleSubmit = async () => {
+    // Add basic input validation
+
     const currentTime = new Date().toISOString();
 
     const newCheckins: CheckinType[] = selectedIds().map((id) => {

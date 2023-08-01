@@ -24,8 +24,8 @@ export function routeData({ params }: RouteDataArgs) {
       )
       .eq('session', params.code);
 
-    if (error === null) return data;
-    return error;
+    if (error === null) return data as (SessionType & PersonType)[];
+    throw error;
   });
 
   const [sessionData] = createResource(async () => {
@@ -59,7 +59,7 @@ export default function Report() {
           Created:{' '}
           {new Date(sessionData()?.created_at ?? '').toLocaleString('en-US')}
         </p>
-        <h3>Attendance:</h3>
+        <h3>Attendance: {peopleData()?.length}</h3>
       </section>
       <section class="w-[300px]">
         <For each={peopleData() as any[] | null}>

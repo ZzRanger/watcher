@@ -20,8 +20,8 @@ export function routeData({ params }: RouteDataArgs) {
         .eq('id', params.childId)
         .single();
 
-      if (error === null) return data;
-      return error;
+      if (error === null) return data as PersonType;
+      throw error;
     }
   );
 
@@ -61,7 +61,7 @@ export default function EditChild() {
           class=" h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
           value={!personData.loading ? personData()!.name : ''}
           onChange={(e) => {
-            mutatePersonData({ ...personData(), name: e.target.value });
+            mutatePersonData({ ...personData()!, name: e.target.value });
           }}
           placeholder="Ex. Bob"
         />
@@ -73,7 +73,7 @@ export default function EditChild() {
           class=" h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
           value={!personData.loading ? personData()!.parent : ''}
           onChange={(e) => {
-            mutatePersonData({ ...personData(), parent: e.target.value });
+            mutatePersonData({ ...personData()!, parent: e.target.value });
           }}
           placeholder="Ex. Susan"
         />
@@ -84,7 +84,10 @@ export default function EditChild() {
           class=" h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
           value={!personData.loading ? personData()!.phone_number : ''}
           onChange={(e) => {
-            mutatePersonData({ ...personData(), phone_number: e.target.value });
+            mutatePersonData({
+              ...personData()!,
+              phone_number: e.target.value,
+            });
           }}
           placeholder="Ex. 123-456-7890"
         />

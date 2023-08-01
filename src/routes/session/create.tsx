@@ -34,6 +34,10 @@ export default function Create() {
   };
 
   const createSession = async () => {
+    // Basic input validation
+    if (name() === '' || classroomIds().length === 0) {
+      return alert('Please add a name and select at least one classroom');
+    }
     const { data, error } = await supabase
       .from('session')
       .insert({
@@ -53,11 +57,11 @@ export default function Create() {
 
   return (
     <main class="flex-col-center layout gap-y-[20px]">
-      <BackComponent />
+      <BackComponent url="/" />
       <H1>Create Session</H1>
-      <section class="flex-col-center gap-y-[20px]">
-        <article class="flex flex-col">
-          <h3 class="ml-5 self-start text-xl font-bold">Name</h3>
+      <section class="flex-col-center gap-y-[30px]">
+        <article class="flex flex-col gap-y-[10px]">
+          <h3 class="self-start text-xl font-bold">Name</h3>
           <input
             class=" h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
             placeholder="Ex. Bob"
@@ -65,16 +69,19 @@ export default function Create() {
             value={name()}
           />
         </article>
-        <For each={classroomsData() as ClassroomType[] | null}>
-          {(classroom, _) => {
-            return (
-              <ClassroomComponent
-                classroom={classroom}
-                handleSelect={handleSelect}
-              />
-            );
-          }}
-        </For>
+        <article class="flex w-full flex-col gap-y-[10px]">
+          <h3 class=" self-start text-xl font-bold">Classrooms</h3>
+          <For each={classroomsData() as ClassroomType[] | null}>
+            {(classroom, _) => {
+              return (
+                <ClassroomComponent
+                  classroom={classroom}
+                  handleSelect={handleSelect}
+                />
+              );
+            }}
+          </For>
+        </article>
         <button
           onClick={() => navigate(`/classroom/addClassroom`)}
           class="flex items-center justify-center rounded-[50px] border-2 border-solid border-[#999999] px-8 py-3 text-[#444444]"

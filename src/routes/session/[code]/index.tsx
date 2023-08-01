@@ -35,14 +35,13 @@ export function routeData({ params }: RouteDataArgs) {
         .select();
 
       if (classroomDataError !== null) throw error;
-      console.log(data);
-      console.log(classroomData.find((classroom) => classroom.id == 1));
+
       const newData = data?.map((val) => {
         return {
           ...val,
-          classroom: classroomData?.find(
-            (classroom) => classroom.id === val.classroomId
-          )!.name,
+          classroom:
+            classroomData?.find((classroom) => classroom.id === val.classroomId)
+              ?.name ?? 'No classroom',
         };
       }) as (CheckinType & PersonType & { classroom: string })[];
 
