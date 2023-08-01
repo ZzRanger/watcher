@@ -1,59 +1,97 @@
-import { supabase } from "~/root";
-import { For, createResource, createSignal } from "solid-js";
+import { supabase } from '~/root';
+import { For, createResource, createSignal } from 'solid-js';
 import {
   A,
   RouteDataArgs,
   useNavigate,
   useParams,
   useRouteData,
-} from "solid-start";
-import Person from "~/components/Person";
-import { createEffect } from "solid-js";
+} from 'solid-start';
+import Person from '~/components/Person';
+import { createEffect } from 'solid-js';
+import H1 from '~/components/H1';
+import Navbar from '~/components/Navbar';
+import Fab from '~/components/Fab';
+import { CheckinType, ClassroomType, PersonType } from '~/utils/models';
+import BackComponent from '~/components/BackComponent';
 
+// Add ability to see children checked in
 export function routeData({ params }: RouteDataArgs) {
-  // load some data
-  const [peopleData] = createResource(async () => {
-    const { data, error } = await supabase.from("person").select();
+  const [peopleData, { mutate: mutatePeopleData, refetch: refetchPeopleData }] =
+    createResource(async () => {
+      const { data: peopleData, error: peopleDataError } = await supabase
+        .from('check_in')
+        .select(
+          `
+          *,
+      person(*)
+      `
+        )
+        .eq('session', params.code)
+        .is('check_out_time', null);
+
+      if (peopleDataError !== null) throw peopleDataError;
+
+      const peopleIds: number[] = peopleData.map((person) => person.id);
+
+      const { data, error } = await supabase.from('person').select();
+
+      if (error === null)
+        return data.filter((person) => !peopleIds.includes(person.id));
+      throw error;
+    });
+
+  const [classroomsData] = createResource(async () => {
+    // Fetch session data
+    const { data: sessionData, error: sessionDataError } = await supabase
+      .from('session')
+      .select()
+      .eq('id', params.code)
+      .single();
+
+    const classroomIds: number[] = sessionData!.classroomIds ?? [];
+
+    const { data, error } = await supabase
+      .from('classroom')
+      .select()
+      .in('id', classroomIds);
 
     if (error === null) return data;
-    return error;
+    throw error;
   });
-  return { peopleData };
+  return { peopleData, classroomsData };
 }
 
 export default function SessionPage() {
-  // Write some sort of code to fetch user data
-
-  // Should also display if the user has already been checked in?
-  // Or just show people who haven't been checked in I think
-
-  const { peopleData } = useRouteData<typeof routeData>();
+  const { peopleData, classroomsData } = useRouteData<typeof routeData>();
   const params = useParams<{ code: string }>();
 
-  // Store all the selected ids here
-  // Use a signal for now, modify if it's jank
-  const [selectedIds, setSelectedIds] = createSignal([] as any[]);
+  const [selectedIds, setSelectedIds] = createSignal([] as number[]);
+  const [classroom, setClassroom] = createSignal('Classroom');
 
   const navigate = useNavigate();
 
-  const handleSelect = (val: any) => {
-    console.log(selectedIds());
-    if (selectedIds().includes(val)) {
-      setSelectedIds(selectedIds().filter((t) => t !== val));
+  const handleSelect = (selectedId: number) => {
+    if (selectedIds().includes(selectedId)) {
+      setSelectedIds(selectedIds().filter((t) => t !== selectedId));
     } else {
-      setSelectedIds([...selectedIds(), val]);
+      setSelectedIds([...selectedIds(), selectedId]);
     }
   };
 
   const handleSubmit = async () => {
-    // Data to insert
     const currentTime = new Date().toISOString();
-    console.log(currentTime);
-    const newCheckins = selectedIds().map((id) => {
-      return { person: id, session: params.code, check_in_time: currentTime };
+
+    const newCheckins: CheckinType[] = selectedIds().map((id) => {
+      return {
+        person: id,
+        session: params.code,
+        check_in_time: currentTime,
+        classroomId: Number(classroom()),
+      };
     });
     const { data, error } = await supabase
-      .from("check_in")
+      .from('check_in')
       .insert(newCheckins)
       .select();
 
@@ -61,136 +99,61 @@ export default function SessionPage() {
       navigate(`/session/${params.code}`);
     }
     if (error) {
-      alert("An error has occured");
+      alert('An error has occured');
     }
   };
 
   return (
-    <div>
-      <main
-        style={{
-          display: "flex",
-          "flex-direction": "column",
-          "align-items": "center",
-          "padding-top": "40px",
-          "padding-bottom": "40px",
-          height: "100vh",
-          "box-sizing": "border-box",
-        }}
-      >
-        <h1>Check-in</h1>
-        <div
-          style={{
-            display: "flex",
-            "flex-direction": "column",
-            "justify-content": "space-between",
-            height: "100%",
-          }}
+    <main class="flex-col-center layout gap-y-[20px]">
+      <BackComponent />
+      <H1>Check-in</H1>
+
+      <section class="flex w-[320px] flex-row items-center justify-between ">
+        {/* In future make this separate page */}
+        <select
+          id="countries"
+          class="block w-[140px] rounded-lg border border-gray-300 bg-gray-50 p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+          value={classroom()}
+          onChange={(e) => setClassroom(e.target.value)}
         >
-          <section
-            style={{
-              display: "flex",
-              "flex-direction": "column",
-              "align-items": "center",
-              "margin-top": "20px",
-              "margin-bottom": "20px",
-            }}
-          >
-            {/* <input
-              placeholder="Search"
-              style={{
-                width: "250px",
-                height: "36px",
-                "padding-left": "8px",
-                "box-sizing": "border-box",
-                "border-radius": "0.5rem",
-                border: "1px solid gray",
-                "font-size": "16px",
-              }}
-            /> */}
-            <article
-              style={{
-                width: "100%",
-                height: "45vh",
-                "overflow-y": "scroll",
-                "overflow-x": "hidden",
-                display: "flex",
-                "flex-direction": "column",
-                margin: "2px",
-              }}
-            >
-              <For each={peopleData() as any[] | null}>
-                {(personData) => (
-                  <Person
-                    personData={personData}
-                    checkinData={null}
-                    handleSelect={handleSelect}
-                  />
-                )}
-              </For>
-            </article>
-          </section>
-          <section
-            style={{
-              display: "flex",
-              "flex-direction": "column",
-              "align-items": "center",
-              height: "180px",
-              "justify-content": "space-evenly",
-            }}
-          >
-            <button
-              style={{
-                width: "250px",
-                height: "36px",
-                "text-align": "center",
-                background: "black",
-                color: "white",
-                "border-radius": "0.375rem",
-                "font-size": "16px",
-                cursor: "pointer",
-              }}
-              onClick={() => navigate(`/session/${params.code}`)}
-            >
-              Back
-            </button>
-            <button
-              style={{
-                width: "250px",
-                height: "36px",
-                "text-align": "center",
-                background: "black",
-                color: "white",
-                "border-radius": "0.375rem",
-                "font-size": "16px",
-                cursor: "pointer",
-              }}
-              onClick={handleSubmit}
-            >
-              Enter
-            </button>
-            <A
-              style={{
-                width: "250px",
-                height: "36px",
-                "text-align": "center",
-                "text-decoration": "none",
-                display: "flex",
-                "flex-direction": "column",
-                "justify-content": "center",
-                background: "black",
-                color: "white",
-                "border-radius": "0.375rem",
-                "font-size": "16px",
-                cursor: "pointer",
-              }}
-              href={`/session/${params.code}/checkin/addChild`}
-            >
-              Add New Child
-            </A>
-          </section>
-        </div>
-      </main>
-    </div>
+          <option selected>Classroom</option>
+
+          <For each={classroomsData() as ClassroomType[]}>
+            {(classroom) => (
+              <option value={`${classroom.id}`}>{classroom.name}</option>
+            )}
+          </For>
+        </select>
+        <A
+          href={`/session/${params.code}/checkin/addChild`}
+          class="text-sm text-primary"
+        >
+          + Add new child
+        </A>
+      </section>
+      {/* <input
+        class=" h-[36px] w-[350px] rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
+        placeholder="Search"
+        onChange={(e) => {}}
+      /> */}
+      <section class="mt-2 w-[350px] overflow-y-scroll">
+        <For each={peopleData() as PersonType[] | null}>
+          {(personData) => (
+            <Person
+              person={personData}
+              checkinTime={'Not checked in'}
+              classroom=""
+              handleSelect={handleSelect}
+            />
+          )}
+        </For>
+      </section>
+
+      <div class="absolute bottom-[5vh] left-0 flex h-10 w-screen items-center justify-center">
+        <Fab onClick={handleSubmit} class="bg-primary text-xl text-white">
+          Done
+        </Fab>
+      </div>
+    </main>
   );
 }

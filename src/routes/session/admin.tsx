@@ -1,123 +1,127 @@
-import { For, createResource } from "solid-js";
-import { A, RouteDataArgs, useRouteData } from "solid-start";
-import { supabase } from "~/root";
+import { For, ResourceFetcher, createResource } from 'solid-js';
+import { A, RouteDataArgs, useRouteData } from 'solid-start';
+import BackComponent from '~/components/BackComponent';
+import H1 from '~/components/H1';
+
+import PersonInfo from '~/components/PersonInfo';
+
+import { supabase } from '~/root';
+import { PersonType, SessionType } from '~/utils/models';
+import { formatCheckInTime } from '~/utils/utils';
+
+const test: () => void = async () => {
+  console.log('HI');
+};
+
+function testa(): void {
+  console.log('HM');
+}
+
+test();
+
+testa();
+const fetchSessionDataa: ResourceFetcher<true, SessionType[]> = async () => {
+  try {
+    const { data, error } = await supabase.from('session').select();
+
+    if (error === null) return data as SessionType[];
+    throw error;
+  } catch (e) {
+    // Presumably log errors here
+    console.log(e);
+    throw e;
+  }
+};
+
+async function fetchSessionData() {
+  try {
+    const { data, error } = await supabase.from('session').select();
+
+    if (error === null) return data as SessionType[];
+    throw error;
+  } catch (e) {
+    // Presumably log errors here
+    console.log(e);
+    throw e;
+  }
+}
 
 export function routeData({ params }: RouteDataArgs) {
-  // load some data
+  const [sessionData] = createResource(fetchSessionData);
 
-  const [sessionData] = createResource(async () => {
-    const { data, error } = await supabase.from("session").select();
+  const [peopleData] = createResource(async () => {
+    const { data, error } = await supabase.from('person').select();
 
-    if (error === null) return data;
-    return error;
+    try {
+      if (error === null) return data as PersonType[];
+      throw error;
+    } catch (e) {
+      console.log('Presumably add logging here');
+      throw e;
+    }
   });
 
-  const [personData] = createResource(async () => {
-    const { data, error } = await supabase.from("person").select();
-
-    if (error === null) return data;
-    return error;
-  });
-
-  return { sessionData, personData };
+  return { sessionData, peopleData };
 }
 
 export default function AdminDashboard() {
-  // Should show all the sessions created
-  // As well as all the children
-
-  const { sessionData, personData } = useRouteData<typeof routeData>();
+  const { sessionData, peopleData } = useRouteData<typeof routeData>();
 
   return (
-    <div>
-      <main
-        style={{
-          display: "flex",
-          "flex-direction": "column",
-          "align-items": "center",
-          "padding-top": "40px",
-          "padding-bottom": "40px",
-          height: "100vh",
-          "box-sizing": "border-box",
-        }}
-      >
-        <h1>Admin Page</h1>
+    <main class="flex-col-center layout gap-y-[20px] overflow-y-scroll">
+      <BackComponent />
 
-        <h3> Stats</h3>
-        <div>
-          Total # of sessions:{" "}
-          {!sessionData.loading ? sessionData()!.length : "0"}
+      <section class="flex-col-center gap-y-1">
+        <H1>Children</H1>
+        <div class="font-bold">
+          {!peopleData.loading ? peopleData()!.length : '0'} total children
         </div>
-        <div>
-          Total # of children:{" "}
-          {!personData.loading ? personData()!.length : "0"}
+      </section>
+      <section class="flex-col-center w-[300px]">
+        {/* <input
+          class="h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
+          placeholder="Search"
+          onChange={(e) => {}}
+        /> */}
+        <For each={peopleData() as PersonType[] | undefined}>
+          {(person, _) => {
+            return (
+              <A href={`/editChild/${person.id}`} class="w-[300px]">
+                <PersonInfo personData={person} />
+              </A>
+            );
+          }}
+        </For>
+      </section>
+      <section class="flex-col-center mt-10 gap-y-1">
+        <H1>Sessions</H1>
+        <div class="font-bold">
+          {!peopleData.loading ? peopleData()!.length : '0'} total sessions
         </div>
-        <h3>Sessions</h3>
-        <article
-          style={{
-            height: "40vh",
-            "overflow-x": "hidden",
-            "overflow-y": "scroll",
-            "margin-bottom": "40px",
+      </section>
+      <section class="flex-col-center w-[300px]">
+        {/* <input
+          class="h-[36px] w-full rounded-[10px] bg-[#EBEBEB] px-5 text-xl text-[#6B7280] placeholder-[#6B7280]"
+          placeholder="Search"
+          onChange={(e) => {}}
+        /> */}
+        <For each={sessionData() as SessionType[] | null}>
+          {(session, _) => {
+            return (
+              <A href={`/session/${session.id}`} class="w-full">
+                <article class="flex h-fit w-full flex-col items-start border-b-[1px] border-solid border-b-[#737373] px-[13px] py-[10px]">
+                  <div class="text-base text-[#737373]">
+                    Created: {formatCheckInTime(session.created_at)}
+                  </div>
+                  <div class="text-xl font-medium">
+                    {session.name ?? 'session name'}
+                  </div>
+                </article>
+              </A>
+            );
           }}
-        >
-          <For each={sessionData() as any[] | null}>
-            {(session) => {
-              return (
-                <A
-                  style={{
-                    display: "flex",
-                    "flex-direction": "column",
-                    "text-decoration": "none",
-                    color: "black",
-                    border: "1px solid gray",
-                    padding: "16px",
-                    "border-radius": "0.375rem",
-                    height: "40px",
-                    width: "200px",
-                  }}
-                  href={`/session/${session.id}`}
-                >
-                  <div style={{ "font-size": "18px" }}>{session.name}</div>
-                  <div style={{ "font-size": "14px" }}>{session.id}</div>
-                </A>
-              );
-            }}
-          </For>
-        </article>
-        <h3>Children</h3>
-        <article
-          style={{
-            height: "40vh",
-            "overflow-x": "hidden",
-            "overflow-y": "scroll",
-          }}
-        >
-          <For each={personData() as any[] | null}>
-            {(person) => {
-              return (
-                <A
-                  href={`/editChild/${person.id}`}
-                  style={{
-                    display: "flex",
-                    "flex-direction": "column",
-                    "text-decoration": "none",
-                    color: "black",
-                    border: "1px solid gray",
-                    padding: "16px",
-                    "border-radius": "0.375rem",
-                    height: "40px",
-                    width: "200px",
-                  }}
-                >
-                  <div style={{ "font-size": "18px" }}>{person.name}</div>
-                  <div style={{ "font-size": "14px" }}>{person.id}</div>
-                </A>
-              );
-            }}
-          </For>
-        </article>
-      </main>
-    </div>
+        </For>
+      </section>
+    </main>
   );
 }
